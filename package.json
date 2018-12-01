@@ -1,0 +1,25 @@
+{
+  "name": "weather",
+  "version": "0.0.0",
+  "description": "Simple weather viewer",
+  "main": "index.html",
+  "dependencies": {
+    "vue": {
+      "integrity": "sha512-mFbcWoDIJi0w0Za4emyLiW72Jae0yjANHbCVquMKijcavBGypqlF7zHRgMa5k4sesdv7hv2rB4JPdZfR+TPfhQ==",
+      "resolved": "https://registry.npmjs.org/vue/-/vue-2.5.17.tgz",
+      "version": "^2.5.17"
+    },
+    "vue-router": "^3.0.2",
+    "webpack": "^4.26.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Destroyko/weather.git"
+  },
+  "keywords": [
+    "js",
+    "vuejs"
+  ],
+  "author": "Vasiliy Kriukov",
+  "license": "GNU General Public License v3.0"
+}
