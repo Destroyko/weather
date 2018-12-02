@@ -2,11 +2,11 @@
   <div id="app">
     <div class="container">
       <div class="row">
-        <div class="col-4">
+        <div class="col-3">
           <left-side></left-side>
         </div>
-        <div class="col-8">
-          <router-view/>
+        <div class="col">
+          <right-side></right-side>
         </div>
       </div>
     </div>
@@ -15,9 +15,11 @@
 
 <script>
 import LeftSide from "./components/layout/left-side";
+import RightSide from "./components/layout/right-side";
+
 export default {
   name: 'App',
-    components: {LeftSide}
+  components: {RightSide, LeftSide}
 }
 </script>
 

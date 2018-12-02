@@ -7,7 +7,7 @@
 <script>
 import UserInfo from "../common/user-info";
 export default {
-  name: 'home',
+    name: 'home',
     components: {UserInfo}
 }
 </script>

@@ -3,9 +3,9 @@
 </template>
 
 <script>
-    export default {
-        name: "left-side"
-    }
+export default {
+  name: 'left-side'
+}
 </script>
 
 <style scoped>
