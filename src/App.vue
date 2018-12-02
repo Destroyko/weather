@@ -1,13 +1,23 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
-    <router-view/>
+    <div class="container">
+      <div class="row">
+        <div class="col-4">
+          <left-side></left-side>
+        </div>
+        <div class="col-8">
+          <router-view/>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+import LeftSide from "./components/layout/left-side";
 export default {
-  name: 'App'
+  name: 'App',
+    components: {LeftSide}
 }
 </script>
 
@@ -16,7 +26,7 @@ export default {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
+  text-align: left;
   color: #2c3e50;
   margin-top: 60px;
 }
