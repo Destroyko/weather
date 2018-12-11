@@ -83,14 +83,27 @@
     export default {
         data: () => ({
             drawer: false,
-            address: ''
+            some:'testtestset',
+            current_location: null,
+            user: {
+                mapPosition: {lat: null, lng: null}
+            }
         }),
-        props: {
-            source: String
-        },
+        props: { source: String },
         components: {
             GoogleMap,
             Autocomplete
+        },
+        methods: {
+            test: function () {
+                console.log('123');
+            }
+        },
+        mounted(){
+            this.user.mapPosition.lat = GoogleMap.data().dragEvents.lat;
+            this.user.mapPosition.lng = GoogleMap.data().dragEvents.lng;
+        },
+        watch: {
         }
     }
 

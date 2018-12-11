@@ -15,5 +15,11 @@ Vue.use(VueGoogleMaps, {
 Vue.config.productionTip = false
 
 new Vue({
-  render: h => h(App),
+    render: h => h(App),
+    methods: {
+        someMethod(){
+            alert('parent');
+        }
+
+    }
 }).$mount('#app')

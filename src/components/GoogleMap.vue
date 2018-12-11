@@ -1,11 +1,12 @@
 <template>
     <div>
-
         <gmap-map
                 :center="center"
                 :zoom="12"
                 style="width:100%;  height: 400px;"
                 :disableDefaultUI="true"
+                ref="mapRef"
+                @dragend="updateCoordinates"
         >
             <gmap-marker
                     :key="index"
@@ -21,24 +22,21 @@
 <script>
     export default {
         name: "GoogleMap",
+        props: ['someFunctionParent'],
         data() {
             return {
                 center: { lat: 45.508, lng: 12.587 },
+                dragEvents: {lat: null, lng: null},
                 markers: [],
                 places: [],
                 currentPlace: null
             };
         },
-
         mounted() {
             this.geolocate();
         },
 
         methods: {
-            // receives a place object via the autocomplete component
-            setPlace(place) {
-                this.currentPlace = place;
-            },
             addMarker() {
                 if (this.currentPlace) {
                     const marker = {
@@ -51,13 +49,17 @@
                     this.currentPlace = null;
                 }
             },
-            geolocate: function() {
+            geolocate() {
                 navigator.geolocation.getCurrentPosition(position => {
                     this.center = {
                         lat: position.coords.latitude,
                         lng: position.coords.longitude
                     };
                 });
+            },
+            updateCoordinates() {
+                this.dragEvents.lat = this.$refs.mapRef.$mapObject.getCenter().lat();
+                this.dragEvents.lng = this.$refs.mapRef.$mapObject.getCenter().lng();
             }
         }
     };
