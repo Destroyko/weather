@@ -18,7 +18,6 @@ Vue.use(VueGoogleMaps, {
     load: {
         key: "AIzaSyC8z6MribxwC44fk_suJ5uP-jrxH23ot6g",
         libraries: "places",// necessary for places input
-        disableDefaultUI: true
     }
 });
 Vue.config.productionTip = false;

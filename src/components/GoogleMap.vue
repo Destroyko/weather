@@ -2,19 +2,19 @@
     <div>
         <gmap-map
                 :center="center"
-                :zoom="12"
+                :zoom="10"
+                :options="{minZoom: 8, maxZoom: 11,disableDefaultUI: true}"
                 style="width:100%;  height: 400px;"
                 :disableDefaultUI="true"
                 ref="mapRef"
                 @dragend="updateCoordinates"
+                @drag="updateCirclePosition"
+                @zoom="updateCirclePosition"
         >
-            <gmap-marker
-                    :key="index"
-                    v-for="(m, index) in markers"
-                    :position="m.position"
-                    @click="center=m.position"
-                    @drag=""
-            ></gmap-marker>
+            <gmap-circle ref="circle"
+                         :radius="4000"
+                         :center='dragEvents.lat && dragEvents.lng ? dragEvents : center'
+            />
         </gmap-map>
     </div>
 </template>
@@ -24,7 +24,7 @@
         name: "GoogleMap",
         data() {
             return {
-                center: { lat: 45.508, lng: 12.587 },
+                center: { lat: 1, lng: 1 },
                 dragEvents: {lat: null, lng: null},
                 markers: [],
                 places: [],
@@ -32,34 +32,25 @@
             };
         },
         mounted() {
-            this.geolocate();
+            this.geolocate()
         },
-
         methods: {
-            addMarker() {
-                if (this.currentPlace) {
-                    const marker = {
-                        lat: this.currentPlace.geometry.location.lat(),
-                        lng: this.currentPlace.geometry.location.lng()
-                    };
-                    this.markers.push({ position: marker });
-                    this.places.push(this.currentPlace);
-                    this.center = marker;
-                    this.currentPlace = null;
-                }
-            },
             geolocate() {
                 navigator.geolocation.getCurrentPosition(position => {
                     this.center = {
                         lat: position.coords.latitude,
                         lng: position.coords.longitude
                     };
+                    this.$emit('mountedPosition', this.center)
                 });
             },
             updateCoordinates() {
                 this.dragEvents.lat = this.$refs.mapRef.$mapObject.getCenter().lat();
                 this.dragEvents.lng = this.$refs.mapRef.$mapObject.getCenter().lng();
                 this.$emit('dragEvents', this.dragEvents);
+            },
+            updateCirclePosition() {
+                this.$refs.circle.$circleObject.setCenter({lat: this.$refs.mapRef.$mapObject.getCenter().lat(), lng: this.$refs.mapRef.$mapObject.getCenter().lng()})
             }
         }
     };
