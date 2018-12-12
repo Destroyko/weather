@@ -22,7 +22,6 @@
 <script>
     export default {
         name: "GoogleMap",
-        props: ['someFunctionParent'],
         data() {
             return {
                 center: { lat: 45.508, lng: 12.587 },
@@ -60,6 +59,7 @@
             updateCoordinates() {
                 this.dragEvents.lat = this.$refs.mapRef.$mapObject.getCenter().lat();
                 this.dragEvents.lng = this.$refs.mapRef.$mapObject.getCenter().lng();
+                this.$emit('dragEvents', this.dragEvents);
             }
         }
     };

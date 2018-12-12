@@ -36,7 +36,7 @@
                     <v-flex xs12 sm6 offset-sm3>
                         <!--<Autocomplete />-->
                         <v-card class="pa-3" flat height="400px">
-                            <google-map/>
+                            <google-map @dragEvents="onDragEvents"/>
                         </v-card>
                         <v-card>
                             <v-card-title primary-title>
@@ -83,10 +83,10 @@
     export default {
         data: () => ({
             drawer: false,
-            some:'testtestset',
             current_location: null,
             user: {
-                mapPosition: {lat: null, lng: null}
+                mapPosition: null,
+                mapPositionName: null
             }
         }),
         props: { source: String },
@@ -95,16 +95,28 @@
             Autocomplete
         },
         methods: {
-            test: function () {
-                console.log('123');
+            //refactoring: needs a controller;
+            onDragEvents(position) {
+                this.user.mapPosition = position;
+
+                // move to other place;
+                this.axios.post('https://maps.googleapis.com/maps/api/geocode/json?latlng=' + this.user.mapPosition.lat + ',' + this.user.mapPosition.lng + '&key=AIzaSyC8z6MribxwC44fk_suJ5uP-jrxH23ot6g')
+                    .then(response => {
+                        // need add auto resize search zone. if not find city;
+                        this.user.mapPositionName = this._.find(response.data.results, {'types': ['locality','political']});
+                    })
+                    .catch(e => {
+                        console.table(e)
+                    });
             }
         },
         mounted(){
-            this.user.mapPosition.lat = GoogleMap.data().dragEvents.lat;
-            this.user.mapPosition.lng = GoogleMap.data().dragEvents.lng;
+            // auto set place after loading;
+
+           // this.user.mapPosition.lat = GoogleMap.data().dragEvents.lat;
+           // this.user.mapPosition.lng = GoogleMap.data().dragEvents.lng;
         },
-        watch: {
-        }
+        watch: {}
     }
 
 </script>
