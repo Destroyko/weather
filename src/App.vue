@@ -33,24 +33,29 @@
         <v-content>
             <v-container fluid fill-height>
                 <v-layout>
-                    <v-flex xs12 sm6 offset-sm3>
-                        <!--<Autocomplete />-->
-                        <v-card class="pa-3" flat height="400px">
-                            <google-map @dragEvents="updateTemplateCard"/>
+                    <v-flex xs12 sm7 offset-sm1>
+                        <v-card>
+
                         </v-card>
+                    </v-flex>
+                    <v-flex xs12 sm3>
+                        <!--<Autocomplete />-->
+
                         <v-card>
                             <v-card-title primary-title>
-                                <div>
-                                    <h3 class="headline mb-0">{{ user.mapPositionName }}</h3>
-                                    <div>Located two hours south of Sydney in the <br>Southern Highlands of New South
-                                        Wales, ...
-                                    </div>
-                                </div>
+                                <h3 class="headline mb-0">
+                                    <v-icon>my_location</v-icon>
+                                    {{ user.mapPositionName }}
+                                </h3>
                             </v-card-title>
-                            <v-card-actions>
-                                <v-btn flat color="orange">Share</v-btn>
-                                <v-btn flat color="orange">Explore</v-btn>
-                            </v-card-actions>
+                        </v-card>
+                        <v-card class="pa-3" flat>
+                            <google-map ref="gMap" @onUpdateMap="updateTemplateCard"/>
+                        </v-card>
+                        <v-card>
+                            <near-positions-list @onUpdateMap="updateLocation"
+                                                 v-bind:positionsList="user.mapNearPositions"/>
+                            <br>
                         </v-card>
                     </v-flex>
                 </v-layout>
@@ -78,6 +83,7 @@
 
 <script>
     import GoogleMap from "./components/GoogleMap";
+    import NearPositionsList from "./components/NearPositionsList";
     // import Autocomplete from './components/GoogleAutoComplete';
 
     export default {
@@ -89,24 +95,23 @@
                 mapNearPositions: null
             }
         }),
-        props: { source: String },
+        props: {source: String},
         components: {
+            NearPositionsList,
             GoogleMap
         },
         methods: {
+            updateLocation(_lat, _lng) {
+                this.$refs.gMap.onUpdateMap(_lat, _lng);
+            },
             updateTemplateCard(_event) {
-                console.log(_event);
                 this.user = _event
             }
         },
-        mounted(){
-            // auto set place after loading;
+        mounted() {
 
-           // this.user.mapPosition = GoogleMap.data().center;
         },
-        watch: {
-
-        }
+        watch: {}
     }
 
 </script>

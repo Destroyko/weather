@@ -26,73 +26,119 @@
         name: "GoogleMap",
         data() {
             return {
-                newCoordinates: {lat: null, lng: null},
                 user: {
                     mapPosition: {},
                     mapPositionName: null,
-                    mapNearPositions: null
-                },
-                places: [],
-                currentPlace: null
+                    mapNearPositions: null,
+                    oldCoordinates: {}
+                }
             };
         },
         mounted() {
             this.geolocate();
-
         },
         methods: {
             geolocate() {
                 navigator.geolocation.getCurrentPosition(position => {
-                    this.user.mapPosition = {
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude
+                    this.user.mapPosition = this.user.oldCoordinates = {
+                        lat: parseFloat(position.coords.latitude),
+                        lng: parseFloat(position.coords.longitude)
                     };
-                    this.onDragEvents()
+                    this.onUpdateMap()
                 });
             },
-            onDragEvents() {
+            onUpdateMap(_lat, _lng) {
+                if (_lat && _lng) {
+                    this.$refs.mapRef.$mapObject.setCenter({lat: parseFloat(_lat), lng: parseFloat(_lng)});
+                    this.user.mapPosition = {
+                        lat: parseFloat(_lat),
+                        lng: parseFloat(_lng)
+                    };
+                    this.updateCirclePosition()
+                }
                 // get user current position from map and save to data;
                 this.getRemotePlace()
                 // find near places and save to data;
                 this.getRemoteNearPlaces()
-                // console.log(this.user.mapPositionName)
-                // console.log(this.user.mapNearPositions)
-                this.$emit('dragEvents', this.user)
+                this.$emit('onUpdateMap', this.user)
             },
             getRemotePlace() {
-                this.axios.post('https://maps.googleapis.com/maps/api/geocode/json?latlng=' + this.user.mapPosition.lat + ',' + this.user.mapPosition.lng + '&key=AIzaSyC8z6MribxwC44fk_suJ5uP-jrxH23ot6g')
+                this.axios.post('https://maps.googleapis.com/maps/api/geocode/json?latlng=' + parseFloat(this.user.mapPosition.lat) + ',' + parseFloat(this.user.mapPosition.lng) + '&key=AIzaSyC8z6MribxwC44fk_suJ5uP-jrxH23ot6g')
                     .then(response => {
-                        return this.setPlace(response.data.results) })
-                    .catch(e => {console.table(e)});
+                        return this.setPlace(response.data.results)
+                    })
+                    .catch(e => {
+                        console.table(e)
+                    });
             },
             getRemoteNearPlaces() {
-                this.axios.post('http://api.geonames.org/findNearbyPlaceNameJSON?lat='+ this.user.mapPosition.lat +'&lng='+ this.user.mapPosition.lng +'&style=short&radius=5&cities=cities4500&maxRows=10&username=mr.destroyko')
+                this.axios.post('http://api.geonames.org/findNearbyPlaceNameJSON?lat=' + this.user.mapPosition.lat + '&lng=' + this.user.mapPosition.lng + '&style=short&radius=5&cities=cities4500&maxRows=10&username=mr.destroyko')
                     .then(response => {
                         if (this._.size(response.data.geonames) >= 0)
                             this.user.mapNearPositions = response.data.geonames
                     })
-                    .catch(e => {console.table(e)});
+                    .catch(e => {
+                        console.table(e)
+                    });
             },
             setPlace(place) {
-                let _place
-                // need add auto resize search zone. if not find city;
-                _place = this._.find(place, {'types': ['locality','political']});
+                let _place, _name;
                 if (!_place) {
-                    _place = this._.find(place, {'types': ['administrative_area_level_2','political']});
+                    _place = this._.find(place, {'types': ['locality', 'political']});
+                    if (_place = this._.get(_place, 'address_components')) {
+                        let _level1, _level2, _level3;
+                        if (_level1 = this._.find(_place, {'types': ['locality', 'political']}))
+                            _level1 = _level1['long_name'];
+                        else
+                            _level1 = '';
+                        if (_level2 = this._.find(_place, {'types': ['administrative_area_level_1', 'political']}))
+                            if (_level2.long_name)
+                                _level2 = _level2.long_name;
+                        if (_level3 = this._.find(_place, {'types': ['country', 'political']}))
+                            if (_level3.long_name)
+                                _level3 = _level3.long_name;
+                        _name = _level1 + ', ' + _level2 + ', ' + _level3
+                    }
                 }
-                // console.log(this._.get(_place, 'formatted_address'))
-                this.user.mapPositionName = this._.get(_place, 'formatted_address')
-                console.log(this.user.mapPositionName);
+                if (!_place) {
+                    if (_place = this._.find(place, {'types': ['route']})) {
+                        if (_place = this._.get(_place, 'address_components')) {
+                            let _level1, _level2, _level3;
+                            if (_level1 = this._.find(_place, {'types': ['locality', 'political']}))
+                                _level1 = _level1['long_name'];
+                            if (!_level1) {
+                                if (_level1 = this._.find(_place, {'types': ['administrative_area_level_2', 'political']}))
+                                    _level1 = _level1['short_name'];
+                            }
+                            if (_level2 = this._.find(_place, {'types': ['administrative_area_level_1', 'political']}))
+                                if (_level2.long_name)
+                                    _level2 = _level2.long_name;
+                            if (_level3 = this._.find(_place, {'types': ['country', 'political']}))
+                                if (_level3.long_name)
+                                    _level3 = _level3.long_name;
+                            _name = _level1 + ', ' + _level2 + ', ' + _level3
+                        }
+                    }
+                }
+                if (!_place) {
+                    _place = this._.find(place, {'types': ['administrative_area_level_2', 'political']});
+                    _name = this._.get(_place, 'formatted_address')
+                }
+                this.user.mapPositionName = _name
             },
 
             // ---------------------
             updateCoordinates() {
-                this.user.mapPosition.lat = this.$refs.mapRef.$mapObject.getCenter().lat();
-                this.user.mapPosition.lng = this.$refs.mapRef.$mapObject.getCenter().lng();
-                this.onDragEvents();
+                this.user.mapPosition.lat = parseFloat(this.$refs.mapRef.$mapObject.getCenter().lat());
+                this.user.mapPosition.lng = parseFloat(this.$refs.mapRef.$mapObject.getCenter().lng());
+                this.onUpdateMap();
+
             },
             updateCirclePosition() {
-                this.$refs.circle.$circleObject.setCenter({lat: this.$refs.mapRef.$mapObject.getCenter().lat(), lng: this.$refs.mapRef.$mapObject.getCenter().lng()})
+                this.$refs.circle.$circleObject.setCenter({
+                    lat: parseFloat(this.$refs.mapRef.$mapObject.getCenter().lat()),
+                    lng: parseFloat(this.$refs.mapRef.$mapObject.getCenter().lng())
+                })
             },
         }
     };
