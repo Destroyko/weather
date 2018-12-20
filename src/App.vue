@@ -34,17 +34,17 @@
             <v-container fluid fill-height>
                 <v-layout>
                     <v-flex xs12 sm7 offset-sm1>
-                        <v-card class="pa-3" flat>
+                        <v-card class="pa-3 elevation-3" flat>
                             <v-card-title class="mt-0 pt-0 pl-0" primary-title>
                                 <h3 class="headline mb-0">
                                     <v-icon>my_location</v-icon>
                                     {{ user.mapPositionName }}
                                 </h3>
                             </v-card-title>
-
+                            <open-weather-map  v-bind:positionLatLng="user.mapPosition"/>
                         </v-card>
                     </v-flex>
-                    <v-flex xs12 sm3 class="ml-3">
+                    <v-flex xs12 sm3 class="ml-3 elevation-3">
                         <v-card class="pa-3" flat>
                             <google-map ref="gMap" @onUpdateMap="updateTemplateCard"/>
                         </v-card>
@@ -74,7 +74,8 @@
             user: {
                 mapPosition: {},
                 mapPositionName: null,
-                mapNearPositions: null
+                mapNearPositions: null,
+                oldCoordinates: {}
             }
         }),
         props: {source: String},

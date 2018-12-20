@@ -25,5 +25,16 @@ Vue.config.productionTip = false;
 
 new Vue({
     render: h => h(App),
-    mounted() {}
+    data: {
+        user: '',
+    },
+    mounted() {
+        navigator.geolocation.getCurrentPosition(position => {
+            this.user = {
+                lat: parseFloat(position.coords.latitude),
+                lng: parseFloat(position.coords.longitude)
+            }
+        });
+
+    }
 }).$mount('#app')
