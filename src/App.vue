@@ -34,48 +34,29 @@
             <v-container fluid fill-height>
                 <v-layout>
                     <v-flex xs12 sm7 offset-sm1>
-                        <v-card>
-
-                        </v-card>
-                    </v-flex>
-                    <v-flex xs12 sm3>
-                        <!--<Autocomplete />-->
-
-                        <v-card>
-                            <v-card-title primary-title>
+                        <v-card class="pa-3" flat>
+                            <v-card-title class="mt-0 pt-0 pl-0" primary-title>
                                 <h3 class="headline mb-0">
                                     <v-icon>my_location</v-icon>
                                     {{ user.mapPositionName }}
                                 </h3>
                             </v-card-title>
+
                         </v-card>
+                    </v-flex>
+                    <v-flex xs12 sm3 class="ml-3">
                         <v-card class="pa-3" flat>
                             <google-map ref="gMap" @onUpdateMap="updateTemplateCard"/>
                         </v-card>
-                        <v-card>
+                        <v-card class="pb-2">
                             <near-positions-list @onUpdateMap="updateLocation"
                                                  v-bind:positionsList="user.mapNearPositions"/>
-                            <br>
                         </v-card>
                     </v-flex>
                 </v-layout>
             </v-container>
         </v-content>
         <v-footer app fixed>
-            <v-toolbar
-                    dense
-                    floating
-            >
-                <v-text-field
-                        hide-details
-                        prepend-icon="search"
-                        single-line
-                ></v-text-field>
-
-                <v-btn icon>
-                    <v-icon>my_location</v-icon>
-                </v-btn>
-            </v-toolbar>
             <span>&copy; 2018</span>
         </v-footer>
     </v-app>
@@ -84,6 +65,7 @@
 <script>
     import GoogleMap from "./components/GoogleMap";
     import NearPositionsList from "./components/NearPositionsList";
+    import OpenWeatherMap from './components/OpenWeatherMap';
     // import Autocomplete from './components/GoogleAutoComplete';
 
     export default {
@@ -98,7 +80,8 @@
         props: {source: String},
         components: {
             NearPositionsList,
-            GoogleMap
+            GoogleMap,
+            OpenWeatherMap
         },
         methods: {
             updateLocation(_lat, _lng) {

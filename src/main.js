@@ -4,6 +4,7 @@ import App from './App.vue'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 import VueLodash from 'vue-lodash'
+// import Geonames from 'geonames.js';
 
 import 'roboto-fontface/css/roboto/roboto-fontface.css'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
@@ -11,7 +12,7 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import * as VueGoogleMaps from "vue2-google-maps"
 
 const options = { name: '_' };
-
+// Vue.use(Geonames);
 Vue.use(VueLodash, options);
 Vue.use(VueAxios, axios);
 Vue.use(VueGoogleMaps, {

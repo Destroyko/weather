@@ -27,7 +27,10 @@
         data() {
             return {
                 user: {
-                    mapPosition: {},
+                    mapPosition: {
+                        lat: 50.45466,
+                        lng: 30.5238
+                    },
                     mapPositionName: null,
                     mapNearPositions: null,
                     oldCoordinates: {}
@@ -63,7 +66,7 @@
                 this.$emit('onUpdateMap', this.user)
             },
             getRemotePlace() {
-                this.axios.post('https://maps.googleapis.com/maps/api/geocode/json?latlng=' + parseFloat(this.user.mapPosition.lat) + ',' + parseFloat(this.user.mapPosition.lng) + '&key=AIzaSyC8z6MribxwC44fk_suJ5uP-jrxH23ot6g')
+                this.axios.get('https://maps.googleapis.com/maps/api/geocode/json?latlng=' + parseFloat(this.user.mapPosition.lat) + ',' + parseFloat(this.user.mapPosition.lng) + '&key=AIzaSyC8z6MribxwC44fk_suJ5uP-jrxH23ot6g')
                     .then(response => {
                         return this.setPlace(response.data.results)
                     })
@@ -72,7 +75,7 @@
                     });
             },
             getRemoteNearPlaces() {
-                this.axios.post('http://api.geonames.org/findNearbyPlaceNameJSON?lat=' + this.user.mapPosition.lat + '&lng=' + this.user.mapPosition.lng + '&style=short&radius=5&cities=cities4500&maxRows=10&username=mr.destroyko')
+                this.axios.get('http://api.geonames.org/findNearbyPlaceNameJSON?lat=' + this.user.mapPosition.lat + '&lng=' + this.user.mapPosition.lng + '&style=short&radius=5&cities=cities4500&maxRows=10&username=mr.destroyko')
                     .then(response => {
                         if (this._.size(response.data.geonames) >= 0)
                             this.user.mapNearPositions = response.data.geonames
@@ -135,9 +138,11 @@
 
             },
             updateCirclePosition() {
+                let _lat = parseFloat(this.$refs.mapRef.$mapObject.getCenter().lat()),
+                    _lng = parseFloat(this.$refs.mapRef.$mapObject.getCenter().lng())
                 this.$refs.circle.$circleObject.setCenter({
-                    lat: parseFloat(this.$refs.mapRef.$mapObject.getCenter().lat()),
-                    lng: parseFloat(this.$refs.mapRef.$mapObject.getCenter().lng())
+                    lat: _lat,
+                    lng: _lng
                 })
             },
         }
