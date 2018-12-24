@@ -41,14 +41,14 @@
                                     {{ user.mapPositionName }}
                                 </h3>
                             </v-card-title>
-                            <open-weather-map  v-bind:positionLatLng="user.mapPosition"/>
+                            <open-weather-map ref="Weather"  v-bind:positionLatLng="user.mapPosition"/>
                         </v-card>
                     </v-flex>
-                    <v-flex xs12 sm3 class="ml-3 elevation-3">
-                        <v-card class="pa-3" flat>
+                    <v-flex xs12 sm3 class="ml-3">
+                        <v-card class="pa-3 elevation-3" flat>
                             <google-map ref="gMap" @onUpdateMap="updateTemplateCard"/>
                         </v-card>
-                        <v-card class="pb-2">
+                        <v-card class="pb-2 elevation-3" flat>
                             <near-positions-list @onUpdateMap="updateLocation"
                                                  v-bind:positionsList="user.mapNearPositions"/>
                         </v-card>
@@ -87,9 +87,11 @@
         methods: {
             updateLocation(_lat, _lng) {
                 this.$refs.gMap.onUpdateMap(_lat, _lng);
+
             },
             updateTemplateCard(_event) {
-                this.user = _event
+                this.user = _event;
+                this.$refs.Weather.onUpdateMap(_event.mapPosition.lat, _event.mapPosition.lng);
             }
         },
         mounted() {
